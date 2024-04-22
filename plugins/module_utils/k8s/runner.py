@@ -172,7 +172,7 @@ def perform_action(svc, definition: Dict, params: Dict) -> Dict:
                 return result
 
         if params.get("apply"):
-            instance = svc.apply(resource, definition, existing)
+            instance, result["warnings"] = svc.apply(resource, definition, existing)
             result["method"] = "apply"
         elif not existing:
             if state == "patched":
@@ -183,14 +183,14 @@ def perform_action(svc, definition: Dict, params: Dict) -> Dict:
                     )
                 )
                 return result
-            instance = svc.create(resource, definition)
+            instance, result["warnings"] = svc.create(resource, definition)
             result["method"] = "create"
             result["changed"] = True
         elif params.get("force", False):
-            instance = svc.replace(resource, definition, existing)
+            instance, result["warnings"] = svc.replace(resource, definition, existing)
             result["method"] = "replace"
         else:
-            instance = svc.update(resource, definition, existing)
+            instance, result["warnings"] = svc.update(resource, definition, existing)
             result["method"] = "update"
 
     # If needed, wait and/or create diff
